@@ -326,69 +326,6 @@ backend-jelou/
 └── README.md
 ```
 
-## 🔐 Autenticación y Seguridad
-
-### JWT Tokens
-
-- **Endpoint de generación**: `POST /auth/demo-token`
-- **Expiración**: 24 horas
-- **Header**: `Authorization: Bearer <token>`
-
-### Token Interno de Servicios
-
-Para comunicación entre microservicios:
-- **Token**: `internal-token` (definido en `.env` como `SERVICE_TOKEN`)
-- **Uso**: Endpoint interno `/customers/internal/:id`
-
-## 🧪 Testing
-
-### Script de prueba completo
-
-```bash
-#!/bin/bash
-
-# 1. Generar token
-TOKEN=$(curl -s -X POST http://localhost:3001/auth/demo-token \
-  -H "Content-Type: application/json" -d '{}' | jq -r '.token')
-
-echo "Token: ${TOKEN:0:50}..."
-
-# 2. Crear orden
-echo "Creando orden..."
-ORDER=$(curl -s -X POST http://localhost:3002/orders \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $TOKEN" \
-  -d '{
-    "customer_id": 1,
-    "items": [{"product_id": 1, "qty": 2}]
-  }')
-
-ORDER_ID=$(echo $ORDER | jq -r '.id')
-echo "Orden creada: ID=$ORDER_ID"
-
-# 3. Confirmar orden
-echo "Confirmando orden..."
-curl -s -X POST http://localhost:3002/orders/$ORDER_ID/confirm \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "X-Idempotency-Key: test-$(date +%s)" | jq .
-
-echo "✅ Prueba completada"
-```
-
-## 🐛 Troubleshooting
-
-### Los contenedores no inician
-
-```bash
-# Ver logs
-docker-compose logs -f
-
-# Reconstruir imágenes
-docker-compose down
-docker-compose build --no-cache
-docker-compose up -d
-```
-
 ### Error "Invalid token" o "Unauthorized"
 
 ```bash
@@ -452,25 +389,3 @@ CUSTOMERS_API_BASE=http://localhost:3001
 ORDERS_API_BASE=http://localhost:3002
 ```
 
-## 📖 Documentación Adicional
-
-- **[SWAGGER.md](./SWAGGER.md)** - Guía de uso de Swagger/OpenAPI
-- **[LAMBDA_GUIDE.md](./LAMBDA_GUIDE.md)** - Guía completa del Lambda Orchestrator
-- **[TEST_PRODUCTS.md](./TEST_PRODUCTS.md)** - Ejemplos de pruebas de productos
-
-## 🎓 Stack Tecnológico
-
-- **Runtime**: Node.js 22 / TypeScript 5
-- **Framework**: Express.js
-- **ORM**: Prisma
-- **Base de datos**: MySQL 8
-- **Validación**: Zod
-- **Autenticación**: JWT (jsonwebtoken)
-- **Logging**: Pino
-- **Documentación**: Swagger/OpenAPI
-- **Contenedores**: Docker + Docker Compose
-- **Lambda**: Serverless Framework (offline)
-
-## 📄 Licencia
-
-MIT
