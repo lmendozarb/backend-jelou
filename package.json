@@ -1,0 +1,17 @@
+{
+  "name": "backend-jelou",
+  "private": true,
+  "workspaces": [
+    "customers-api",
+    "orders-api",
+    "lambda-orchestrator"
+  ],
+  "scripts": {
+    "install-all": "npm install --workspaces",
+    "prisma:generate": "npx prisma generate --schema=prisma/schema.prisma"
+  },
+  "devDependencies": {
+    "prisma": "^5.19.0",
+    "typescript": "^5.5.0"
+  }
+}

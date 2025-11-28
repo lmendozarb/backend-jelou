@@ -1,0 +1,43 @@
+version: "3.9"
+
+services:
+  mysql:
+    image: mysql:8
+    container_name: jelou-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: jelou
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
+      - ./db/seed.sql:/docker-entrypoint-initdb.d/2-seed.sql
+
+  customers-api:
+    build:
+      context: .
+      dockerfile: customers-api/Dockerfile
+    container_name: customers-api
+    env_file:
+      - .env
+    depends_on:
+      - mysql
+    ports:
+      - "${CUSTOMERS_PORT}:${CUSTOMERS_PORT}"
+
+  orders-api:
+    build:
+      context: .
+      dockerfile: orders-api/Dockerfile
+    container_name: orders-api
+    env_file:
+      - .env
+    depends_on:
+      - mysql
+      - customers-api
+    ports:
+      - "${ORDERS_PORT}:${ORDERS_PORT}"
+
+volumes:
+  mysql_data:

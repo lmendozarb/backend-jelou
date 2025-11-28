@@ -1,0 +1,16 @@
+DATABASE_URL=mysql://root:root@mysql:3306/jelou
+JWT_SECRET=super-secret
+SERVICE_TOKEN=internal-token
+
+# Logging
+LOG_LEVEL=info
+NODE_ENV=development
+
+CUSTOMERS_PORT=3001
+ORDERS_PORT=3002
+
+CUSTOMERS_INTERNAL_URL=http://customers-api:3001/customers/internal
+
+CUSTOMERS_API_BASE=http://localhost:3001
+ORDERS_API_BASE=http://localhost:3002
+JWT_TOKEN=fake-jwt-for-demo
